@@ -18,22 +18,19 @@ class JSON_object():
         self.values = list(self.data.values())
         
     def change(self,key,value):
-        if key in self.keys:
-            self.data[key] = value
-            self._update()
-        else: Error('this key doesn\'t exists')
+        if key not in self.keys: Error('this key doesn\'t exist'); return
+        self.data[key] = value
+        self._update()
 
     def add(self,key,value):
-        if key not in self.keys:
-            self.data[key] = value
-            self._update()
-        else: Error('this key exists')
+        if key in self.keys: Error('this key exists'); return
+        self.data[key] = value
+        self._update()
 
     def delete(self,key):
-        if key in self.keys:
-            self.data.pop(key)
-            self._update()
-        else: Error('this key exists')
+        if key not in self.keys: Error('this key doesn\t exist'); return
+        self.data.pop(key)
+        self._update()
         
     def save(self):
         with open(self.name, "w") as write_file:
