@@ -60,7 +60,7 @@ def read(name):
 def create(name,_data={},debug=False):
     '''
     creates JSON file and returns it as class JSON_object
-    Vasya = read('vasya.json')
+    Vasya = create('vasya.json')
     '''
     data = _data
     def creating(name,data):
