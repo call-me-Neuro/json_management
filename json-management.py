@@ -28,7 +28,7 @@ class JSON_object():
         self._update()
 
     def delete(self,key):
-        if key not in self.keys: Error('this key doesn\t exist'); return
+        if key not in self.keys: Error('this key doesn\'t exist'); return
         self.data.pop(key)
         self._update()
         
