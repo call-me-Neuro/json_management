@@ -54,7 +54,7 @@ def read(name):
     except Exception as exc:
         Error(exc)
 
-def create(name,_data={},debug=False,save=True):
+def create(name,_data={},save=True):
     '''
     creates JSON file and returns it as class JSON_object
     Vasya = create('vasya.json')
