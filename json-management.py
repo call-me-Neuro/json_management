@@ -54,20 +54,20 @@ def read(name):
     except Exception as exc:
         Error(exc)
 
-def create(name,_data={},debug=False):
+def create(name,_data={},debug=False,save=True):
     '''
     creates JSON file and returns it as class JSON_object
     Vasya = create('vasya.json')
     '''
     data = _data
-    def creating(name,data):
-        with open(name,'w') as write_file:
-            json.dump(data, write_file)
+    def creating(name, data, save):
         data = JSON_object( data, name )
+        if save:
+            data.save()
         return data
     
     try:
-        return creating(name,data)
+        return creating(name, data, save)
     except Exception as exc:
         Error(exc)
 
