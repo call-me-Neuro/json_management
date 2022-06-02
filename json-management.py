@@ -62,8 +62,7 @@ def create(name,_data={},debug=False,save=True):
     data = _data
     def creating(name, data, save):
         data = JSON_object( data, name )
-        if save:
-            data.save()
+        if save: data.save()
         return data
     
     try:
