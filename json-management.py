@@ -86,7 +86,7 @@ class JSON_manager():
         and makes this object a representation of it
         '''
         try:
-            self.data = _data
+            self.data = data
             self.name = name
             if save: self.save()
         except Exception as exc:
