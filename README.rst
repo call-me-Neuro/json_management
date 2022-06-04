@@ -1,5 +1,6 @@
 # json-management
 json data manager 
+
 it works like in django:
 
 you have object and you can edit it as you need and save when you need
