@@ -7,25 +7,66 @@ def help():
     info = '''
         JSON_manager allows you manage json files
         file = JSON_manager()#here you have empty object
-        but you already can work with json   
+        #but you already can work with json   
         
-        if you want read file
-        => file.read("name.json")
-        or during creation set read=True and set name
-        if you want create file
-        => file.create("name.json")
-        or during creation set create=True and set name
-        also if you don't want create json file at this moment
-        you can set save=False
+        #if you want open file
+        >>> file.read("name.json")
+        #or
+        >>> file = JSON_manager(name='name',read=True)
+        #if you want create file
+        >>> file.create("name.json")
+        #or
+        >>> file = JSON_manager(name='name',create=True)
+        #also if you don't want create json file at this moment
+        #you can set save=False
+        >>> test = JSON_manager(name='test.json',read=True)
+        >>> test.data
+        {'name': 'Petya', 'lvl': '100'}
+        #
+        #change
+        #
+        >>> test.change('name','Vasya')
+        >>> test.data
+        {'name': 'Vasya', 'lvl': '100'}
+        #
+        #add
+        #
+        >>> test.add('language','Pyton')
+        >>> test.data
+        {'name': 'Vasya', 'lvl': '100', 'language': 'Python'}
+        #
+        #delete
+        #
+        >>> test.delete('language')
+        >>> test.data
+        {'name': 'Vasya', 'lvl': '100'}
+        #
+        #open_dict
+        #
+        >>> test = JSON_manager(name='test.json',read=True)
+        >>> test.data
+        {'name': 'Petya', 'lvl': '100',
+        'subjects': {'monday': 'math', 'tuesday': 'physics'}}
+        >>> i = test.open_dict('subjects')#it is instance of JSON_manager class
+        >>> i.data
+        {'monday': 'math', 'tuesday': 'physics'}
+        >>> i.change('monday','english')
+        >>> i.data
+        {'monday': 'english', 'tuesday': 'physics'}
+        >>> test.data#changes from i copies in original
+        {'name': 'Petya', 'lvl': '100', 'subjects': {'monday': 'english', 'tuesday': 'physics'}}
         '''
     print(info)
+    
 
 class JSON_manager():
     ''' enter help() to get more information '''
     
-    def __init__(self,data={},name="",read=False,create=False,save=True):
+    def __init__(self,data={},name="",read=False,create=False,save=True,
+                 original=True):
         self.data = data
         self.name = name
+        self.original = original
         
         if read:
             try:
@@ -59,8 +100,21 @@ class JSON_manager():
         if key not in self.keys: Error('this key doesn\'t exist'); return
         self.data.pop(key)
         self._update()
+
+    def open_dict(self,key):
+        '''
+        returns opened dict as JSON_manager
+        maybe bugs are exists please tell me about it
+        '''
+        if key not in self.keys: Error('this key doesn\'t exist'); return
+        if type( self.data.get(key) ) == dict:
+            try:
+                return JSON_manager(self.data[key],original=False)
+            except Exception as exc:
+                Error(exc)
         
     def save(self):
+        if not original: return
         name = self.name
         if name == "": name = 'unnamed.json'
         try:
