@@ -17,11 +17,13 @@ JSON_manager allows you manage json files
     # or
     >>> file = JSON_manager(name='name',read=True)
     # if you want create file
-    >>> file.create("name.json")
+    >>> file.create()#here you can redefine name="name", data={...}
+    #using self.name to create, default is "" and this way saves as "unnamed.json"
     # or
     >>> file = JSON_manager(name='name',create=True)
     # also if you don't want create json file at this moment
     # you can set save=False
+    #
     >>> test = JSON_manager(name='test.json',read=True)
     >>> test.data
     {'name': 'Petya', 'lvl': '100'}
