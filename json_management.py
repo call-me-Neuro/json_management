@@ -14,7 +14,7 @@ def help():
         # or
         >>> file = JSON_manager(name='name',read=True)
         # if you want create file
-        >>> file.create("name.json")
+        >>> file.create()
         # or
         >>> file = JSON_manager(name='name',create=True)
         # also if you don't want create json file at this moment
@@ -141,14 +141,14 @@ class JSON_manager():
         except Exception as exc:
             Error(exc)
 
-    def create(self,name,data,save=True):
+    def create(self,name="",data={},save=True):
         '''
         creates JSON file
         and makes this object a representation of it
         '''
         try:
-            self.data = data
-            self.name = name
+            if data != {}: self.data = data
+            if name != "": self.name = name
             if save: self.save()
         except Exception as exc:
             Error(exc)
