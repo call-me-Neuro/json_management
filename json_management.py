@@ -114,7 +114,7 @@ class JSON_manager():
         maybe bugs are exists please tell me about it
         '''
         if key not in self.keys: Error('this key doesn\'t exist'); return
-        if type( self.data.get(key) ) == dict:
+        if isinstance(self.data.get(key), dict):
             try:
                 return JSON_manager(self.data[key],original=False)
             except Exception as exc:
