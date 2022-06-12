@@ -59,7 +59,33 @@ JSON_manager allows you manage json files
     >>> i.data
     {'monday': 'english', 'tuesday': 'physics'}
     >>> test.data#changes from i copies in original
-    {'name': 'Petya', 'lvl': '100', 'subjects': {'monday': 'english', 'tuesday': 'physics'}}
+    {'name': 'Petya', 'lvl': '100', 
+    'subjects': {'monday': 'english', 'tuesday': 'physics'}}
+    #
+    # cancel
+    #
+    >>> file.add('name','Petya')
+    >>> file.data
+    {'name': 'Petya'}
+    >>> file.cancel()
+    >>> file.data
+    {}
+    #
+    # multiples
+    #
+    >>> file.data
+    {'age': 'seventeen'}
+    >>> file.add_multiple(False, name='Vasya', lvl='four')
+    >>> file.data
+    {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
+    >>> file.delete_multiple(False, 'name', 'lvl')
+    >>> file.data
+    {'age': 'seventeen'}
+    >>> file.cancel()
+    >>> file.data
+    {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
+    >>> file.change_multiple(name='Petya', lvl='five')
+    >>> file.data
     #
     # save
     #
