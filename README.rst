@@ -86,6 +86,7 @@ JSON_manager allows you manage json files
     {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
     >>> file.change_multiple(name='Petya', lvl='five')
     >>> file.data
+    {'age': 'seventeen', 'name': 'Petya', 'lvl': 'five'}
     #
     # save
     #
