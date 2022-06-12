@@ -63,7 +63,7 @@ JSON_manager allows you manage json files
     'subjects': {'monday': 'english', 'tuesday': 'physics'}}
     #
     # cancel
-    #
+    # it works on add, delete, change and all multiples
     >>> file.add('name','Petya')
     >>> file.data
     {'name': 'Petya'}
