@@ -18,7 +18,7 @@ def help():
         # or
         >>> file = JSON_manager(name='name',create=True)
         # also if you don't want create json file at this moment
-        # you can set save=False
+        # you can specify save=False
         >>> test = JSON_manager(name='test.json',read=True)
         >>> test.data
         {'name': 'Petya', 'lvl': '100'}
@@ -58,13 +58,39 @@ def help():
         # changes from i copies in original
         {'name': 'Petya', 'lvl': '100', 'subjects': {'monday': 'english', 'tuesday': 'physics'}}
         #
+        # cancel
+        #
+        >>> file.add('name','Petya')
+        >>> file.data
+        {'name': 'Petya'}
+        >>> file.cancel()
+        >>> file.data
+        {}
+        #
+        # multiples
+        #
+        >>> file.data
+        {'age': 'seventeen'}
+        >>> file.add_multiple(False, name='Vasya', lvl='four')
+        >>> file.data
+        {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
+        >>> file.delete_multiple(False, 'name', 'lvl')
+        >>> file.data
+        {'age': 'seventeen'}
+        >>> file.cancel()
+        >>> file.data
+        {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
+        >>> file.change_multiple(name='Petya', lvl='five')
+        >>> file.data
+
+        #
         # save
         #
         # when you change JSON_manager any way it doesn't change json file
         >>> file.save()
         '''
     print(info)
-    
+
 
 class JSON_manager():
     ''' enter help() to get more information '''
@@ -74,6 +100,15 @@ class JSON_manager():
         self.data = data
         self.name = name
         self.original = original
+        #last_change
+        self.last_change = None
+        self.data_dict = {}
+        self.funcs = {
+            self.add: self.delete_multiple,
+            self.delete: self.add_multiple,
+            self.change: self.change_multiple,
+            None: None
+            }
         
         if read:
             try:
@@ -87,26 +122,67 @@ class JSON_manager():
             except Exception as exc:
                 Error(exc)
                 
-        self._update()
+        self._update(None,{})
 
-    def _update(self):#kind of low level func :D
+    def _update(self, name_func, data_dict):
         self.keys = list(self.data.keys())
         self.values = list(self.data.values())
+        self.data_dict = data_dict
+        self.last_change = self.funcs[name_func]
         
     def change(self,key,value):
         if key not in self.keys: Error('this key doesn\'t exist'); return
+        data_dict = {key: self.data[key]}
         self.data[key] = value
-        self._update()
+        self._update(self.change, data_dict)
+
+    def change_multiple(self, stop=False, **kwargs):
+        data_dict = {}
+        for key,value in kwargs.items():
+            if key in self.keys:
+                self.data[key] = value
+                data_dict[key] = value
+            else:
+                Error('this key doesn\'t exist')
+                if stop: return
+        self._update(self.change, data_dict)
 
     def add(self,key,value):
         if key in self.keys: Error('this key exists'); return
+        data_dict = {key:value}
         self.data[key] = value
-        self._update()
+        self._update(self.add, data_dict)
+
+    def add_multiple(self, stop=False, **kwargs):
+        data_dict = {}
+        for key,value in kwargs.items():
+            if key not in self.keys:
+                self.data[key] = value
+                data_dict[key] = value
+            else:
+                Error('this key exists')
+                if stop: return
+        self._update(self.add, data_dict)
 
     def delete(self,key):
         if key not in self.keys: Error('this key doesn\'t exist'); return
-        self.data.pop(key)
-        self._update()
+        poped = self.data.pop(key)
+        data_dict = {key: poped}
+        self._update(self.delete, data_dict)
+
+    def delete_multiple(self, stop=False, *args):
+        ''' Always specify stop True or False to avoid losing first arg '''
+        data_dict = {}
+
+        for key in args:
+            if key in self.keys:
+                poped = self.data.pop(key)
+                data_dict[key] = poped
+            else:
+                Error('this key doesn\'t exist')
+                if stop: return
+                
+        self._update(self.delete, data_dict)
 
     def open_dict(self,key):
         '''
@@ -127,6 +203,15 @@ class JSON_manager():
         try:
             with open(name, "w") as write_file:
                 json.dump(self.data, write_file)
+        except Exception as exc:
+            Error(exc)
+
+    def cancel(self):
+        try:
+            if self.last_change == self.delete_multiple:
+                self.last_change( False, *self.data_dict )
+            else:
+                self.last_change( **self.data_dict )
         except Exception as exc:
             Error(exc)
             
@@ -152,5 +237,3 @@ class JSON_manager():
             if save: self.save()
         except Exception as exc:
             Error(exc)
-
-    
