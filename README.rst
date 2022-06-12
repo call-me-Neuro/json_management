@@ -1,6 +1,8 @@
 json-management
 ===============
 
+Hi! This is my first project on github and maybe it is not very usefull, i just want to increase my lvl and maybe meet some criticism! Also i want to work at IT but now i am hihgschool student.
+
 json data manager 
 
 you have object and you can edit it as you need and save when you need
