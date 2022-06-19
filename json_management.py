@@ -197,7 +197,7 @@ class JSON_manager():
                 Error(exc)
         
     def save(self):
-        if not original: return
+        if not self.original: return
         name = self.name
         if name == "": name = 'unnamed.json'
         try:
