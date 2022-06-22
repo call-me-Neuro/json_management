@@ -1,5 +1,7 @@
 import json
 
+version = "0.01"
+
 def Error(ad_info=""):
     print(f'something is going wrong... {ad_info}')
     
@@ -56,7 +58,8 @@ def help():
         {'monday': 'english', 'tuesday': 'physics'}
         >>> test.data
         # changes from i copies in original
-        {'name': 'Petya', 'lvl': '100', 'subjects': {'monday': 'english', 'tuesday': 'physics'}}
+        {'name': 'Petya', 'lvl': '100',
+        'subjects': {'monday': 'english', 'tuesday': 'physics'}}
         #
         # cancel
         #
@@ -82,12 +85,16 @@ def help():
         {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
         >>> file.change_multiple(name='Petya', lvl='five')
         >>> file.data
-        {'age': 'seventeen', 'name': 'Petya', 'lvl': 'five'}
+
         #
         # save
         #
         # when you change JSON_manager any way it doesn't change json file
+        # if file.auto_save = False
         >>> file.save()
+        #
+        New func!
+        file.last_changes()# shows last acts
         '''
     print(info)
 
@@ -100,13 +107,24 @@ class JSON_manager():
         self.data = data
         self.name = name
         self.original = original
+        self.auto_save = False
         #last_change
+        self.changes_list = []
         self.last_change = None
         self.data_dict = {}
         self.funcs = {
             self.add: self.delete_multiple,
             self.delete: self.add_multiple,
             self.change: self.change_multiple,
+            None: None
+            }
+        self.funcs_repr = {
+            self.add: 'add',
+            self.delete: 'delete',
+            self.change: 'change',
+            self.add_multiple: 'add_multiple',
+            self.delete_multiple: 'delete_multiple',
+            self.change_multiple: 'change_multiple',
             None: None
             }
         
@@ -123,12 +141,17 @@ class JSON_manager():
                 Error(exc)
                 
         self._update(None,{})
+        self.changes_list.pop(0)
 
     def _update(self, name_func, data_dict):
         self.keys = list(self.data.keys())
         self.values = list(self.data.values())
         self.data_dict = data_dict
         self.last_change = self.funcs[name_func]
+        last_change_repr = self.funcs_repr[name_func]
+        self.changes_list.append( (last_change_repr, self.data_dict) )
+
+        if self.auto_save: self.save()
         
     def change(self,key,value):
         if key not in self.keys: Error('this key doesn\'t exist'); return
@@ -195,16 +218,6 @@ class JSON_manager():
                 return JSON_manager(self.data[key],original=False)
             except Exception as exc:
                 Error(exc)
-        
-    def save(self):
-        if not self.original: return
-        name = self.name
-        if name == "": name = 'unnamed.json'
-        try:
-            with open(name, "w") as write_file:
-                json.dump(self.data, write_file)
-        except Exception as exc:
-            Error(exc)
 
     def cancel(self):
         try:
@@ -212,6 +225,18 @@ class JSON_manager():
                 self.last_change( False, *self.data_dict )
             else:
                 self.last_change( **self.data_dict )
+        except Exception as exc:
+            Error(exc)
+    def last_changes(self):
+        for i in self.changes_list:
+            print(i)
+        
+    def save(self):
+        if not self.original: return
+        name = self.name if self.name == "" else 'unnamed.json'
+        try:
+            with open(name, "w") as write_file:
+                json.dump(self.data, write_file)
         except Exception as exc:
             Error(exc)
             
@@ -237,3 +262,6 @@ class JSON_manager():
             if save: self.save()
         except Exception as exc:
             Error(exc)
+
+    
+
