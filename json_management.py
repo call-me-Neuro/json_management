@@ -78,6 +78,8 @@ def help():
         >>> file.data
         {'age': 'seventeen', 'name': 'Vasya', 'lvl': 'four'}
         >>> file.delete_multiple(False, 'name', 'lvl')
+        #first arg says if you wanna stop cycle if error
+        #it's default False and you can ignore in and start from args
         >>> file.data
         {'age': 'seventeen'}
         >>> file.cancel()
@@ -193,12 +195,15 @@ class JSON_manager():
         data_dict = {key: poped}
         self._update(self.delete, data_dict)
 
-    def delete_multiple(self, stop=False, *args):
-        ''' Always specify stop True or False to avoid losing first arg '''
+    def delete_multiple(self, *args):
+        ''' now stop is default False and you can specify it in args'''
+        stop = False
         data_dict = {}
 
         for key in args:
-            if key in self.keys:
+            if isinstance(key, bool):
+                stop = key
+            elif key in self.keys:
                 poped = self.data.pop(key)
                 data_dict[key] = poped
             else:
